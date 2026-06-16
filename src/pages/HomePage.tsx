@@ -64,11 +64,13 @@ export default function HomePage() {
     );
   }, []);
 
-  const handleResult = (r: CertCheckResult) => {
+  const handleResult = (r: CertCheckResult | null) => {
     setResult(r);
-    setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    if (r) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   };
 
   return (

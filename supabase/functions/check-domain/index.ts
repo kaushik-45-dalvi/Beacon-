@@ -61,6 +61,32 @@ serve(async (req) => {
       );
     }
 
+    // Validate that the domain exists (resolves in DNS)
+    let exists = false;
+    try {
+      const records = await Deno.resolveDns(domain, "A");
+      if (records && records.length > 0) exists = true;
+    } catch {
+      try {
+        const cname = await Deno.resolveDns(domain, "CNAME");
+        if (cname && cname.length > 0) exists = true;
+      } catch {
+        try {
+          const aaaa = await Deno.resolveDns(domain, "AAAA");
+          if (aaaa && aaaa.length > 0) exists = true;
+        } catch {
+          exists = false;
+        }
+      }
+    }
+
+    if (!exists) {
+      return new Response(
+        JSON.stringify({ error: `The domain "${domain}" does not exist. Please check the spelling.` }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const getSubjectString = (subject: any) => {
       if (typeof subject === "string") return subject;
       return subject.CN || Object.entries(subject).map(([k, v]) => `${k}=${v}`).join(", ");

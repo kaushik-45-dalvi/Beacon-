@@ -6,7 +6,7 @@ import { SAMPLE_DOMAINS } from '../data/mockData';
 import './DomainChecker.css';
 
 interface Props {
-  onResult: (result: CertCheckResult) => void;
+  onResult: (result: CertCheckResult | null) => void;
   onLoading: (loading: boolean) => void;
 }
 
@@ -26,6 +26,7 @@ export default function DomainChecker({ onResult, onLoading }: Props) {
     setError('');
     setLoading(true);
     onLoading(true);
+    onResult(null); // Clear previous search result when starting a new check
     try {
       const result = await checkCertificate(target);
       onResult(result);
