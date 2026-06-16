@@ -1,0 +1,14 @@
+HTTP/1.1 403 Forbidden
+Date: Mon, 15 Jun 2026 06:45:46 GMT
+Content-Type: application/json
+Content-Length: 103
+Connection: keep-alive
+Strict-Transport-Security: max-age=2592000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=S7K9iMIorHQCsDAKZ4chRa0K3hY53k8EW63yxz%2BfhaZu%2FPH2kV3uxs9riCS3UDibcb38Xgd%2BeqYd1ppiMpCP1oz1NoyQoQ2Sualcdx%2BrgOH54gpuMERJNCpbtRQ6z5IFXTiUSYsLRSsHuA%3D%3D"}]}
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Access-Control-Allow-Origin: *
+Server: cloudflare
+CF-RAY: a0bf9d274c2c8afd-BOM
+
+{"error":"Server-side requests are not allowed on your plan. Upgrade at https://corsproxy.io/pricing/"}

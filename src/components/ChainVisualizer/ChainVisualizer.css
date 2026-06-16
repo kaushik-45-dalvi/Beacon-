@@ -1,0 +1,121 @@
+.chain-visualizer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.chain-node-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.chain-node {
+  border: 1.5px solid var(--border);
+  border-left: 3px solid var(--node-color, var(--accent));
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all var(--dur-med) var(--ease);
+  overflow: hidden;
+}
+
+.chain-node:hover {
+  border-color: var(--node-color, var(--accent));
+  background: var(--node-bg, var(--accent-dim));
+  box-shadow: 0 0 16px rgba(200, 255, 0, 0.08);
+}
+
+.chain-node.expanded {
+  border-color: var(--node-color, var(--accent));
+  background: rgba(255,255,255,0.02);
+}
+
+.chain-node-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.chain-node-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--node-bg, var(--accent-dim));
+  color: var(--node-color, var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chain-node-info { flex: 1; min-width: 0; }
+
+.chain-node-subject {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chain-node-type {
+  color: var(--node-color, var(--accent));
+  margin-top: 2px;
+  font-size: 10px;
+}
+
+.chain-expand-icon {
+  color: var(--text-tertiary);
+  transition: transform var(--dur-med) var(--ease);
+  flex-shrink: 0;
+}
+.chain-expand-icon.rotated { transform: rotate(180deg); }
+
+/* Details panel */
+.chain-node-details {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chain-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.chain-detail-label {
+  width: 60px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.chain-detail-value {
+  flex: 1;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+/* Connector */
+.chain-connector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-5);
+  margin: 2px 0;
+}
+
+.chain-connector-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.chain-connector-label {
+  font-size: 10px;
+  white-space: nowrap;
+}

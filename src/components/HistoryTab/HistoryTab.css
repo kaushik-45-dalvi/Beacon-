@@ -1,0 +1,175 @@
+/* CSS styles for HistoryTab */
+.history-tab {
+  margin-top: var(--space-4);
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .history-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.history-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: var(--space-6);
+  border-left: 2px solid var(--border);
+  gap: var(--space-6);
+  margin-left: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.history-timeline-item {
+  position: relative;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: calc(-1 * var(--space-6) - 7px);
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  border: 2px solid var(--bg-elevated);
+  transition: all var(--dur-med) var(--ease);
+}
+
+.marker-active {
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-dim);
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.timeline-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.timeline-dates {
+  font-size: 12px;
+}
+
+.timeline-details {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.active-item .timeline-details {
+  border-color: var(--border-accent);
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.comparison-header-row {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-primary);
+}
+
+.comparison-row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.comparison-row:last-child {
+  border-bottom: none;
+}
+
+.comparison-col-prop {
+  width: 25%;
+  flex-shrink: 0;
+}
+
+.comparison-col-val {
+  width: 33%;
+  flex-grow: 1;
+}
+
+.comparison-col-arrow {
+  width: 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.val-changed {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.val-changed:hover {
+  background: rgba(88, 151, 205, 0.02);
+}
+
+.trend-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.trend-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.trend-icon {
+  flex-shrink: 0;
+}
+
+.trend-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .trend-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trend-stat-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.trend-stat-val {
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: var(--space-1);
+}

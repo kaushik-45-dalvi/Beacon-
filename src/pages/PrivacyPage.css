@@ -1,0 +1,142 @@
+.legal-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: calc(72px + var(--space-12));
+  padding-bottom: var(--space-24);
+  overflow: hidden;
+}
+
+.legal-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.legal-grid {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  opacity: 0.8;
+}
+
+.legal-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--accent-glow);
+  top: -10%;
+  right: -10%;
+  opacity: 0.08;
+}
+
+.legal-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-glow);
+  bottom: 10%;
+  left: -10%;
+  opacity: 0.06;
+}
+
+.legal-container {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.legal-header {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.legal-icon-wrap {
+  width: 48px;
+  height: 48px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.legal-title {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.legal-content {
+  padding: var(--space-10);
+  background: var(--bg-elevated);
+}
+
+.legal-content section {
+  margin-bottom: var(--space-8);
+}
+
+.legal-content section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-content h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+}
+
+.legal-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.legal-content ul {
+  list-style: disc;
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+.legal-content ul li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.legal-content ul li strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.legal-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.legal-content a:hover {
+  opacity: 0.8;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--accent);
+}
+
+.contact-row a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .legal-content {
+    padding: var(--space-6);
+  }
+}

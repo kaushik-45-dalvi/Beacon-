@@ -1,0 +1,137 @@
+.domain-checker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 680px;
+}
+
+.checker-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: border-color var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease);
+}
+
+.checker-input-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim), 0 0 32px var(--accent-glow);
+}
+
+.checker-input-icon {
+  padding: 0 20px 0 24px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.checker-input-wrap:focus-within .checker-input-icon {
+  color: var(--accent);
+}
+
+.checker-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-family: var(--font-mono);
+  padding: 20px 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.checker-input::placeholder {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.checker-input:disabled {
+  opacity: 0.6;
+}
+
+.checker-btn {
+  flex-shrink: 0;
+  margin: 6px;
+  padding: 14px 24px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: calc(var(--radius-xl) - 4px);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--dur-med) var(--ease);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.checker-btn:hover:not(:disabled) {
+  background: #d4ff1a;
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+.checker-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.checker-btn.loading {
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
+}
+
+.checker-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--red);
+  font-size: 14px;
+  padding: 12px 16px;
+  background: var(--red-dim);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.checker-samples {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.sample-chip {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.sample-chip:hover:not(:disabled) {
+  border-color: var(--border-accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.sample-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .checker-input { font-size: 16px; }
+  .checker-btn { padding: 14px 16px; }
+}
