@@ -93,57 +93,8 @@ export default function DashboardPage() {
 
         if (error) throw error;
 
-        if (data && data.length > 0) {
+        if (data) {
           setCerts(data.map(mapDbToCert));
-        } else {
-          // Live fetching of default domains on first load
-          const { checkCertificate } = await import('../services/certService');
-          const defaults = ['google.com', 'github.com', 'cloudflare.com'];
-          
-          const fetched = await Promise.all(
-            defaults.map(async (d) => {
-              try {
-                const result = await checkCertificate(d);
-                return {
-                  user_id: user.id,
-                  domain: result.domain,
-                  issuer: result.issuer,
-                  issuer_org: result.issuerOrg,
-                  subject: result.subject,
-                  issued_at: result.issuedAt,
-                  expires_at: result.expiresAt,
-                  days_remaining: result.daysRemaining,
-                  status: result.status,
-                  chain_complete: result.chainComplete,
-                  ocsp_status: result.ocspStatus,
-                  key_type: result.keyType,
-                  key_size: result.keySize,
-                  signature_algorithm: result.signatureAlgorithm,
-                  serial_number: result.serialNumber,
-                  fingerprint_sha256: result.fingerprintSha256,
-                  san_domains: result.sanDomains,
-                  chain: result.chain,
-                  history: result.history,
-                  last_checked_at: new Date().toISOString()
-                };
-              } catch {
-                return null;
-              }
-            })
-          );
-          
-          const validCerts = fetched.filter((c): c is any => c !== null);
-          if (validCerts.length > 0) {
-            const { data: inserted, error: insertErr } = await supabase
-              .from('monitored_domains')
-              .insert(validCerts)
-              .select();
-
-            if (insertErr) throw insertErr;
-            if (inserted) {
-              setCerts(inserted.map(mapDbToCert));
-            }
-          }
         }
       } catch (err) {
         console.error('Failed to load domains from Supabase:', err);
@@ -235,6 +186,12 @@ export default function DashboardPage() {
 
   const handleAdd = async () => {
     if (!addDomain.trim() || !user) return;
+
+    if (user?.plan === 'free' && certs.length >= 5) {
+      alert("You have reached the free plan limit of 5 domains. Please upgrade to Pro to monitor more domains.");
+      return;
+    }
+
     setAdding(true);
 
     const { checkCertificate } = await import('../services/certService');
@@ -329,6 +286,11 @@ export default function DashboardPage() {
   const handleBatchMonitor = async () => {
     const validResults = batchResults.filter(r => !r.error);
     if (validResults.length === 0 || !user) return;
+
+    if (user?.plan === 'free' && certs.length + validResults.length > 5) {
+      alert(`Monitoring these domains would exceed your free plan limit of 5 domains. You currently have ${certs.length} domains and are trying to add ${validResults.length}. Please upgrade to Pro.`);
+      return;
+    }
 
     const newDbCerts = validResults.map((r) => ({
       user_id: user.id,
@@ -428,7 +390,13 @@ export default function DashboardPage() {
             <button
               id="btn-add-domain"
               className="btn btn-primary"
-              onClick={() => setShowAdd(true)}
+              onClick={() => {
+                if (user?.plan === 'free' && certs.length >= 5) {
+                  alert("You have reached the free plan limit of 5 domains. Please upgrade to Pro to monitor more domains.");
+                  return;
+                }
+                setShowAdd(true);
+              }}
             >
               <Plus size={14} /> Add Domain
             </button>
@@ -628,9 +596,9 @@ export default function DashboardPage() {
           {initLoading ? (
             <div className="empty-state card">
               <RefreshCw size={40} className="text-accent animate-spin" />
-              <p className="heading">Initializing default domains...</p>
+              <p className="heading">Loading domains...</p>
               <p className="body-sm text-secondary">
-                Fetching real live SSL certificate logs for google.com, github.com, and cloudflare.com
+                Retrieving your monitored domains from the database
               </p>
             </div>
           ) : filtered.length === 0 ? (
@@ -640,7 +608,17 @@ export default function DashboardPage() {
               <p className="body-sm text-secondary">
                 {searchQ ? 'No domains match your search.' : 'Add your first domain to start monitoring.'}
               </p>
-              <button className="btn btn-primary" onClick={() => setShowAdd(true)} id="btn-add-first">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  if (user?.plan === 'free' && certs.length >= 5) {
+                    alert("You have reached the free plan limit of 5 domains. Please upgrade to Pro to monitor more domains.");
+                    return;
+                  }
+                  setShowAdd(true);
+                }}
+                id="btn-add-first"
+              >
                 <Plus size={14} /> Add Domain
               </button>
             </div>
