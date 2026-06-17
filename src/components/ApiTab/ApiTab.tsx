@@ -32,16 +32,17 @@ export default function ApiTab({ result }: Props) {
     san_domains: result.sanDomains
   };
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-supabase-project.supabase.co';
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+  // Never expose real keys in the UI — use a generic public-facing placeholder
+  const publicApiBase = 'https://api.beaconssl.dev/v1';
+  const keyPlaceholder = 'YOUR_BEACON_API_KEY';
 
-  const curlCode = `curl -X GET "${supabaseUrl}/functions/v1/check-domain?domain=${domain}" \\
-  -H "Authorization: Bearer ${supabaseAnonKey}"`;
+  const curlCode = `curl -X GET "${publicApiBase}/check-domain?domain=${domain}" \\
+  -H "Authorization: Bearer ${keyPlaceholder}"`;
 
   const jsCode = `// Fetch certificate information programmatically
-fetch('${supabaseUrl}/functions/v1/check-domain?domain=${domain}', {
+fetch('${publicApiBase}/check-domain?domain=${domain}', {
   headers: {
-    'Authorization': 'Bearer ${supabaseAnonKey}'
+    'Authorization': 'Bearer ${keyPlaceholder}'
   }
 })
 .then(res => res.json())
