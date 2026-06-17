@@ -61,3 +61,16 @@
   justify-content: space-between;
   margin-top: var(--space-3);
 }
+
+@media (max-width: 480px) {
+  .timeline-labels {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+  .timeline-subtext {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+}
