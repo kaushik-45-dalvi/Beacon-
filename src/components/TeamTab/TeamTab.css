@@ -218,3 +218,88 @@
   border-radius: var(--radius-sm);
   background: var(--bg-surface);
 }
+
+/* ── Email Alert Section ───────────────────────── */
+.alert-email-section {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.alert-email-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.alert-email-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-send-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-success {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #fff !important;
+}
+
+.alert-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-2);
+  line-height: 1.5;
+}
+
+.alert-feedback-success {
+  background: var(--green-dim, rgba(56, 161, 105, 0.12));
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+
+.alert-feedback-error {
+  background: rgba(229, 62, 62, 0.1);
+  border: 1px solid var(--red, #E53E3E);
+  color: var(--red, #E53E3E);
+}
+
+/* Divider between email and slack sections */
+.simulator-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.simulator-divider::before,
+.simulator-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Spinner animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spin {
+  animation: spin 0.9s linear infinite;
+  display: inline-block;
+}
