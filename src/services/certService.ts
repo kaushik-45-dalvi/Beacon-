@@ -1,5 +1,4 @@
 import { CertCheckResult, OcspStatus } from '../types';
-import { MOCK_CHAIN } from '../data/mockData';
 
 interface CARecord {
   subject: string;
@@ -224,54 +223,7 @@ async function fetchViaCertspotter(domain: string): Promise<Partial<CertCheckRes
   }
 }
 
-function generateMockCert(domain: string): CertCheckResult {
-  // Generate realistic-looking mock data for demo
-  const issuers = [
-    { name: "Let's Encrypt Authority R3", org: "Let's Encrypt" },
-    { name: "DigiCert TLS RSA SHA256 2020 CA1", org: "DigiCert Inc" },
-    { name: "Google Trust Services LLC", org: "Google Trust Services" },
-    { name: "Amazon RSA 2048 M01", org: "Amazon" },
-    { name: "Cloudflare Inc ECC CA-3", org: "Cloudflare, Inc." },
-  ];
 
-  const issuerIdx = Math.abs(domain.charCodeAt(0) + domain.charCodeAt(domain.length - 1)) % issuers.length;
-  const issuer = issuers[issuerIdx];
-
-  const keyTypes = [{ type: 'ECDSA', size: 256 }, { type: 'RSA', size: 2048 }, { type: 'RSA', size: 4096 }];
-  const keyIdx = domain.length % keyTypes.length;
-  const key = keyTypes[keyIdx];
-
-  // Randomize days remaining based on domain hash
-  const seed = domain.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const daysOptions = [3, 15, 45, 87, 134, 201, 267];
-  const days = daysOptions[seed % daysOptions.length];
-  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
-  const issuedAt = new Date(Date.now() - (90 - days) * 24 * 60 * 60 * 1000).toISOString();
-
-  const hex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
-  const serialNumber = Array.from({ length: 8 }, hex).join(':');
-  const fingerprintSha256 = Array.from({ length: 32 }, hex).join(':');
-
-  return {
-    domain,
-    issuer: issuer.name,
-    issuerOrg: issuer.org,
-    subject: domain,
-    issuedAt,
-    expiresAt,
-    daysRemaining: days,
-    status: getStatus(days),
-    chainComplete: seed % 7 !== 0,
-    ocspStatus: seed % 11 === 0 ? 'revoked' : 'good',
-    keyType: key.type,
-    keySize: key.size,
-    signatureAlgorithm: key.type === 'ECDSA' ? 'SHA256withECDSA' : 'SHA256withRSA',
-    serialNumber,
-    fingerprintSha256,
-    sanDomains: [`www.${domain}`, `api.${domain}`, domain],
-    chain: MOCK_CHAIN,
-  };
-}
 
 export async function checkCertificate(domain: string): Promise<CertCheckResult> {
   // Sanitize domain
