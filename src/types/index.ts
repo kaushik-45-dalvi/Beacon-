@@ -50,6 +50,9 @@ export interface CertCheckResult {
   chain?: CertificateChain;
   history?: HistoricalCert[];
   error?: string;
+  dataSource?: 'live-tls' | 'certspotter-api'; // indicates where data came from
+  hstsEnabled?: boolean;
+  hstsMaxAge?: number;
 }
 
 export interface MonitoredCert extends CertCheckResult {

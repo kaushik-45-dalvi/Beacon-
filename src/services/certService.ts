@@ -289,7 +289,9 @@ export async function checkCertificate(domain: string): Promise<CertCheckResult>
   const realData = await fetchViaCertspotter(cleanDomain);
 
   if (realData && realData.expiresAt) {
-    const chain = generateChain(
+    // Use the real chain from the edge function (live TLS or CertSpotter).
+    // Only fall back to generateChain() if the edge function didn't return one at all.
+    const chain = realData.chain ?? generateChain(
       cleanDomain,
       realData.issuer || 'Unknown Issuer',
       realData.issuerOrg || 'Unknown',

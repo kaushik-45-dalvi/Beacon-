@@ -22,7 +22,10 @@ function getStatus(days: number): "green" | "yellow" | "red" {
 
 async function getLiveCertificate(domain: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    const socket = tls.connect(443, domain, { servername: domain }, () => {
+    const socket = tls.connect(443, domain, {
+      servername: domain,
+      rejectUnauthorized: false, // allow self-signed to still extract cert data
+    }, () => {
       const cert = socket.getPeerCertificate(true);
       if (!cert || Object.keys(cert).length === 0) {
         reject(new Error("No certificate returned from server"));
@@ -32,7 +35,7 @@ async function getLiveCertificate(domain: string): Promise<any> {
       socket.destroy();
     });
 
-    socket.setTimeout(4000);
+    socket.setTimeout(8000); // increased from 4s to 8s to reduce false fallbacks
     socket.on("timeout", () => {
       socket.destroy();
       reject(new Error("Connection timeout trying to connect to " + domain));
@@ -230,6 +233,7 @@ serve(async (req) => {
 
       checkResult = {
         domain,
+        dataSource: "live-tls", // data came directly from a live TLS handshake
         issuer: leafIssuer,
         issuerOrg: leafIssuer.match(/O=([^,]+)/)?.[1] || leafIssuer || "Unknown",
         subject: leafSubject,
@@ -285,10 +289,14 @@ serve(async (req) => {
         return notBefore <= now && notAfter >= now;
       });
 
+      // KEY FIX: Sort by issuance date (not_before) descending — the most recently issued cert
+      // is the one currently in use. Sorting by expiry would pick older certs that happen to
+      // expire later, showing stale/inaccurate data.
       const candidates = active.length > 0 ? active : data;
       const sorted = candidates.sort(
-        (a: any, b: any) => new Date(b.not_after).getTime() - new Date(a.not_after).getTime()
+        (a: any, b: any) => new Date(b.not_before).getTime() - new Date(a.not_before).getTime()
       );
+
       const cert = sorted[0];
 
       const expiresAt = new Date(cert.not_after).toISOString();
@@ -347,6 +355,7 @@ serve(async (req) => {
 
       checkResult = {
         domain,
+        dataSource: "certspotter-api", // live TLS failed; data from certificate transparency logs
         issuer: friendlyName !== "Unknown" ? `${friendlyName} (${issuerOrg})` : issuerName,
         issuerOrg,
         subject: domain,
