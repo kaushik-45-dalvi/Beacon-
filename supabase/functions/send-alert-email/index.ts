@@ -1,4 +1,9 @@
 // supabase/functions/send-alert-email/index.ts
+// Email provider: Brevo (formerly Sendinblue)
+// Free tier: 300 emails/day, no domain verification, no credit card needed.
+// Sign up at https://app.brevo.com → API Keys → Create API Key
+// Set BREVO_API_KEY + BREVO_SENDER_EMAIL in Supabase secrets.
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -31,18 +36,22 @@ serve(async (req) => {
       );
     }
 
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) {
+    // ── Brevo credentials ──────────────────────────────────────────────────
+    // BREVO_API_KEY      → from app.brevo.com → API Keys
+    // BREVO_SENDER_EMAIL → any email you verified as a sender on Brevo
+    // BREVO_SENDER_NAME  → display name (optional, defaults to "BEACON SSL")
+    const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY");
+    if (!BREVO_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "Email service not configured. Set RESEND_API_KEY in Supabase secrets." }),
+        JSON.stringify({ error: "Email service not configured. Set BREVO_API_KEY in Supabase secrets." }),
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // RESEND_FROM_EMAIL: set this in Supabase secrets to override.
-    // Defaults to the verified beaconssl.dev domain sender.
-    const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "BEACON SSL <alerts@beaconssl.dev>";
+    const SENDER_EMAIL = Deno.env.get("BREVO_SENDER_EMAIL") || "noreply@beaconssl.dev";
+    const SENDER_NAME  = Deno.env.get("BREVO_SENDER_NAME")  || "BEACON SSL";
 
+    // ── Email content ──────────────────────────────────────────────────────
     const urgencyColor = daysRemaining <= 7  ? "#E53E3E"
                        : daysRemaining <= 30 ? "#D69E2E"
                        : "#38A169";
@@ -108,7 +117,7 @@ serve(async (req) => {
         <span class="beacon-name">BEACON SSL</span>
       </div>
       <div class="header-title">SSL Certificate Alert</div>
-      <div class="header-sub">This is a simulated alert preview from Beacon's team notification system</div>
+      <div class="header-sub">Real-time SSL monitoring alert from Beacon</div>
     </div>
 
     <div class="body">
@@ -164,8 +173,8 @@ serve(async (req) => {
 
     <div class="footer">
       <p>
-        You received this alert because you requested a simulation from <a href="https://beaconssl.dev">BEACON SSL Monitor</a>.
-        <br />This is a real email sent from the Beacon alert system.
+        You received this alert from <a href="https://beaconssl.dev">BEACON SSL Monitor</a>.
+        <br />This is a real SSL expiry alert — no action needed if your cert is valid.
       </p>
     </div>
   </div>
@@ -183,42 +192,36 @@ Key: ${keyType} ${keySize}-bit
 
 View details at: https://beaconssl.dev
 
-This is a simulated alert preview from Beacon SSL Monitor.`;
+BEACON SSL Monitor — beaconssl.dev`;
 
     const subjectPrefix = daysRemaining <= 7  ? "🚨 CRITICAL"
                         : daysRemaining <= 30 ? "⚠️ ACTION REQUIRED"
                         : "✅ Certificate Status";
 
-    const res = await fetch("https://api.resend.com/emails", {
+    // ── Send via Brevo API ─────────────────────────────────────────────────
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "api-key": BREVO_API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: [email],
+        sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+        to: [{ email }],
         subject: `${subjectPrefix}: ${domain} expires in ${daysRemaining} days`,
-        html: htmlBody,
-        text: textBody,
+        htmlContent: htmlBody,
+        textContent: textBody,
       }),
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error("Resend API error:", errText);
-      // Try to surface a helpful message
-      let errMsg = `Failed to send email (Resend status ${res.status})`;
+      console.error("Brevo API error:", errText);
+      let errMsg = `Failed to send email (Brevo status ${res.status})`;
       try {
         const errJson = JSON.parse(errText);
-        if (errJson.message) errMsg = errJson.message;
-        // Common Resend restriction: not a verified domain
-        if (res.status === 403 || (errJson.name && errJson.name === "validation_error")) {
-          errMsg = `Resend rejected the request: ${errJson.message || errText}. ` +
-            `To send to any email address, verify a custom domain at resend.com/domains and ` +
-            `set RESEND_FROM_EMAIL in your Supabase secrets to "BEACON SSL <alerts@yourdomain.com>".`;
-        }
-      } catch { /* not JSON, use raw text */ errMsg = errText || errMsg; }
+        errMsg = errJson.message || errMsg;
+      } catch { errMsg = errText || errMsg; }
       return new Response(
         JSON.stringify({ error: errMsg }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -227,7 +230,7 @@ This is a simulated alert preview from Beacon SSL Monitor.`;
 
     const resData = await res.json();
     return new Response(
-      JSON.stringify({ success: true, id: resData.id }),
+      JSON.stringify({ success: true, messageId: resData.messageId }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 

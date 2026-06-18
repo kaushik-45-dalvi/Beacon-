@@ -217,12 +217,12 @@ export default function TeamTab({ result }: Props) {
               </div>
             </div>
 
-            {/* Domain verified — clean sender badge */}
+            {/* Brevo verified sender badge */}
             <div className="resend-tier-notice resend-setup-guide">
               <CheckCircle2 size={13} className="resend-tier-icon" style={{ color: 'var(--green)', marginTop: 2 }} />
               <div>
-                Emails sent from <code className="resend-code">alerts@beaconssl.dev</code> via Resend.
-                Recipients receive real SSL alert emails — check spam if not delivered.
+                Emails sent via <strong>Brevo</strong> (free — 300/day, sends to anyone).
+                Powered by <code className="resend-code">alerts@beaconssl.dev</code>.
               </div>
             </div>
 

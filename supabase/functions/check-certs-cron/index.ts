@@ -140,18 +140,21 @@ serve(async (req) => {
                 }),
               });
             } else if (channel === "email" && resendApiKey) {
-              // Send email using Resend
-              await fetch("https://api.resend.com/emails", {
+              // Send email using Brevo (free: 300/day, no domain verification needed)
+              // resendApiKey secret is reused as BREVO_API_KEY here — rename if needed
+              const senderEmail = Deno.env.get("BREVO_SENDER_EMAIL") || "noreply@beaconssl.dev";
+              await fetch("https://api.brevo.com/v3/smtp/email", {
                 method: "POST",
                 headers: {
-                  "Authorization": `Bearer ${resendApiKey}`,
+                  "api-key": resendApiKey, // set BREVO_API_KEY in Supabase secrets
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  from: "Beacon SSL <alerts@beaconssl.dev>",
-                  to: [record.user_email || "user@beacon.dev"], // Default fallback or metadata if stored
+                  sender: { name: "Beacon SSL", email: senderEmail },
+                  to: [{ email: record.user_email || "user@example.com" }],
                   subject: `🚨 SSL Expiration Alert: ${domain}`,
-                  html: `<p>${alertMessage}</p><p>View your dashboard at <a href="https://beaconssl.dev/dashboard">Beacon</a>.</p>`,
+                  htmlContent: `<p>${alertMessage}</p><p>View your dashboard at <a href="https://beaconssl.dev/dashboard">Beacon</a>.</p>`,
+                  textContent: alertMessage,
                 }),
               });
             }
