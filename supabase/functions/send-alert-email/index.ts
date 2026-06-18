@@ -39,6 +39,13 @@ serve(async (req) => {
       );
     }
 
+    // RESEND_FROM_EMAIL: set this in Supabase secrets to your verified domain sender,
+    // e.g. "BEACON SSL <alerts@yourdomain.com>".
+    // Until a custom domain is verified, keep using onboarding@resend.dev (sends to any address
+    // only when a custom domain is active; otherwise Resend restricts delivery to the
+    // account owner's email). See: https://resend.com/docs/dashboard/domains/introduction
+    const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "BEACON SSL <onboarding@resend.dev>";
+
     const urgencyColor = daysRemaining <= 7  ? "#E53E3E"
                        : daysRemaining <= 30 ? "#D69E2E"
                        : "#38A169";
@@ -192,7 +199,7 @@ This is a simulated alert preview from Beacon SSL Monitor.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "BEACON SSL <onboarding@resend.dev>",
+        from: FROM_EMAIL,
         to: [email],
         subject: `${subjectPrefix}: ${domain} expires in ${daysRemaining} days`,
         html: htmlBody,
@@ -203,8 +210,20 @@ This is a simulated alert preview from Beacon SSL Monitor.`;
     if (!res.ok) {
       const errText = await res.text();
       console.error("Resend API error:", errText);
+      // Try to surface a helpful message
+      let errMsg = `Failed to send email (Resend status ${res.status})`;
+      try {
+        const errJson = JSON.parse(errText);
+        if (errJson.message) errMsg = errJson.message;
+        // Common Resend restriction: not a verified domain
+        if (res.status === 403 || (errJson.name && errJson.name === "validation_error")) {
+          errMsg = `Resend rejected the request: ${errJson.message || errText}. ` +
+            `To send to any email address, verify a custom domain at resend.com/domains and ` +
+            `set RESEND_FROM_EMAIL in your Supabase secrets to "BEACON SSL <alerts@yourdomain.com>".`;
+        }
+      } catch { /* not JSON, use raw text */ errMsg = errText || errMsg; }
       return new Response(
-        JSON.stringify({ error: `Failed to send email: ${res.status}` }),
+        JSON.stringify({ error: errMsg }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

@@ -535,3 +535,49 @@
   animation: spin 0.9s linear infinite;
   display: inline-block;
 }
+
+/* ── Resend domain setup notice ────────────────────── */
+.resend-tier-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.6;
+  background: rgba(214, 158, 46, 0.08);
+  border: 1px solid rgba(214, 158, 46, 0.3);
+  color: var(--text-secondary);
+}
+
+.resend-tier-notice.resend-setup-guide {
+  background: rgba(88, 151, 205, 0.06);
+  border-color: rgba(88, 151, 205, 0.2);
+}
+
+.resend-tier-icon {
+  color: var(--yellow);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.resend-setup-guide .resend-tier-icon {
+  color: var(--accent);
+}
+
+.resend-tier-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.resend-tier-link:hover { text-decoration: underline; }
+
+.resend-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--accent);
+}

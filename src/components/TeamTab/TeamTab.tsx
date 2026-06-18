@@ -213,7 +213,23 @@ export default function TeamTab({ result }: Props) {
               </div>
               <div>
                 <strong className="body-sm text-primary">Email Alert</strong>
-                <p className="label text-secondary">Send a real email to your inbox</p>
+                <p className="label text-secondary">Send a real certificate alert email to anyone</p>
+              </div>
+            </div>
+
+            {/* Domain setup guide — unlocks sending to any address */}
+            <div className="resend-tier-notice resend-setup-guide">
+              <AlertCircle size={13} className="resend-tier-icon" />
+              <div>
+                <strong>To send to any email:</strong> Verify your domain on Resend, then set
+                {' '}<code className="resend-code">RESEND_FROM_EMAIL</code> in Supabase secrets to
+                {' '}<code className="resend-code">BEACON SSL &lt;alerts@yourdomain.com&gt;</code>.
+                {' '}<a
+                  href="https://resend.com/domains"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="resend-tier-link"
+                >Add domain on Resend →</a>
               </div>
             </div>
 
@@ -222,7 +238,7 @@ export default function TeamTab({ result }: Props) {
                 id="alert-email-input"
                 type="email"
                 className="input alert-channel-input"
-                placeholder="you@example.com"
+                placeholder="recipient@example.com"
                 value={alertEmail}
                 onChange={e => { setAlertEmail(e.target.value); setEmailState('idle'); setEmailError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleSendEmail()}
@@ -251,9 +267,6 @@ export default function TeamTab({ result }: Props) {
                 <AlertCircle size={13} /> {emailError}
               </div>
             )}
-            <p className="label text-tertiary mt-2" style={{ fontSize: 11 }}>
-              Uses Resend. On free tier, send to your verified email only.
-            </p>
           </div>
 
           {/* ── Slack Channel ── */}
