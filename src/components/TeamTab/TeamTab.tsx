@@ -243,7 +243,7 @@ export default function TeamTab({ result }: Props) {
             {emailState === 'success' && (
               <div className="channel-feedback channel-feedback-success">
                 <CheckCircle2 size={13} />
-                Alert email sent to <strong>{alertEmail}</strong> — check your inbox!
+                Alert email sent to <strong>{alertEmail}</strong> — check your inbox or spam folder!
               </div>
             )}
             {emailState === 'error' && (
