@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield, Bell, BarChart3, Zap, ArrowRight,
-  CheckCircle2, Lock, Globe2, Users, ChevronRight
+  CheckCircle2, Lock, Globe2, Users, ChevronRight,
+  Key, Mail, GitBranch, AlertCircle, Calendar
 } from 'lucide-react';
 import DomainChecker from '../components/DomainChecker';
 import CertResult from '../components/CertResult/CertResult';
@@ -44,6 +45,181 @@ const FEATURES = [
   },
 ];
 
+const FEATURE_SPOTLIGHT = [
+  {
+    id: 'chain',
+    icon: <GitBranch size={22} />,
+    label: 'Full Chain Visualized',
+    title: 'Root-to-Leaf Chain, Always Visible',
+    desc: 'Don\'t guess at your chain. Beacon traces every certificate link from your domain leaf cert through every intermediate, all the way to the trusted root CA — rendered in a collapsible, interactive tree.',
+    badge: { text: 'Chain Complete', color: 'green' },
+    preview: (
+      <div className="spotlight-preview chain-preview">
+        <div className="chain-node-demo leaf">
+          <div className="chain-node-dot accent-dot" />
+          <div>
+            <div className="chain-node-demo-label">example.com</div>
+            <div className="chain-node-demo-type">Domain Certificate</div>
+          </div>
+          <span className="demo-badge green">Valid</span>
+        </div>
+        <div className="chain-connector-demo"><span>↓ signed by</span></div>
+        <div className="chain-node-demo intermediate">
+          <div className="chain-node-dot yellow-dot" />
+          <div>
+            <div className="chain-node-demo-label">Let's Encrypt R3</div>
+            <div className="chain-node-demo-type">Intermediate CA</div>
+          </div>
+          <span className="demo-badge yellow">Trusted</span>
+        </div>
+        <div className="chain-connector-demo"><span>↓ signed by</span></div>
+        <div className="chain-node-demo root">
+          <div className="chain-node-dot green-dot" />
+          <div>
+            <div className="chain-node-demo-label">ISRG Root X1</div>
+            <div className="chain-node-demo-type">Root CA</div>
+          </div>
+          <span className="demo-badge green">Secure</span>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'expiry',
+    icon: <Calendar size={22} />,
+    label: 'Exact Expiry + Days Left',
+    title: 'Know Exactly When You\'ll Expire',
+    desc: 'Not just "a date" — Beacon shows a visual timeline of your cert\'s lifetime, the exact expiry timestamp, and a real-time countdown of days remaining. Color-coded: green when safe, yellow when close, red when critical.',
+    badge: { text: '87 days left', color: 'green' },
+    preview: (
+      <div className="spotlight-preview expiry-preview">
+        <div className="expiry-demo-header">
+          <span className="expiry-demo-domain">example.com</span>
+          <span className="expiry-demo-days" style={{ color: 'var(--green)' }}>87</span>
+          <span className="expiry-demo-unit">days left</span>
+        </div>
+        <div className="expiry-timeline-demo">
+          <div className="expiry-track-demo">
+            <div className="expiry-fill-demo" style={{ width: '76%', background: 'linear-gradient(90deg, rgba(71,158,111,0.3), var(--green))' }} />
+            <div className="expiry-cursor-demo" style={{ left: '76%', borderColor: 'var(--green)' }}>
+              <span className="expiry-cursor-label" style={{ color: 'var(--green)' }}>Today</span>
+            </div>
+          </div>
+        </div>
+        <div className="expiry-demo-dates">
+          <span>Issued: Jan 12, 2025</span>
+          <span style={{ color: 'var(--green)' }}>Expires: Sep 14, 2025</span>
+        </div>
+        <div className="expiry-demo-meta">76% of certificate lifetime used</div>
+      </div>
+    )
+  },
+  {
+    id: 'issuer',
+    icon: <Key size={22} />,
+    label: 'Issuer, SANs & Key Strength',
+    title: 'Full Technical Breakdown at a Glance',
+    desc: 'Who issued it, what domains it covers (SANs), what algorithm and key size protects it — all laid out in a clean metadata grid. From RSA-2048 to ECDSA P-256, know your cert\'s cryptographic strength instantly.',
+    badge: { text: 'RSA 2048-bit', color: 'accent' },
+    preview: (
+      <div className="spotlight-preview issuer-preview">
+        <div className="issuer-grid-demo">
+          <div className="issuer-cell">
+            <div className="issuer-cell-label">Issuer</div>
+            <div className="issuer-cell-value mono-sm">Let's Encrypt R3</div>
+          </div>
+          <div className="issuer-cell">
+            <div className="issuer-cell-label">Key Type</div>
+            <div className="issuer-cell-value">RSA 2048-bit</div>
+          </div>
+          <div className="issuer-cell">
+            <div className="issuer-cell-label">Sig Algorithm</div>
+            <div className="issuer-cell-value">SHA256withRSA</div>
+          </div>
+          <div className="issuer-cell">
+            <div className="issuer-cell-label">OCSP Status</div>
+            <div className="issuer-cell-value"><span className="demo-badge green">Not Revoked</span></div>
+          </div>
+        </div>
+        <div className="san-demo">
+          <div className="san-demo-label">Subject Alternative Names (3)</div>
+          <div className="san-tags-demo">
+            <span className="san-tag-demo">example.com</span>
+            <span className="san-tag-demo">www.example.com</span>
+            <span className="san-tag-demo">api.example.com</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'ocsp',
+    icon: <AlertCircle size={22} />,
+    label: 'OCSP Revocation Status',
+    title: 'Real-Time Revocation Checks',
+    desc: 'A valid cert isn\'t always a safe cert. Beacon queries the OCSP (Online Certificate Status Protocol) endpoint in real-time to check whether the CA has revoked your certificate — and alerts you immediately if it has.',
+    badge: { text: 'Not Revoked', color: 'green' },
+    preview: (
+      <div className="spotlight-preview ocsp-preview">
+        <div className="ocsp-status-demo">
+          <div className="ocsp-icon-demo">
+            <Shield size={28} style={{ color: 'var(--green)' }} />
+          </div>
+          <div>
+            <div className="ocsp-status-label">OCSP Response</div>
+            <div className="ocsp-status-value" style={{ color: 'var(--green)' }}>Good — Not Revoked</div>
+          </div>
+        </div>
+        <div className="ocsp-detail-rows">
+          <div className="ocsp-detail-row">
+            <span>Responder</span>
+            <span className="mono-sm">r3.o.lencr.org</span>
+          </div>
+          <div className="ocsp-detail-row">
+            <span>This Update</span>
+            <span>Jun 18, 2025</span>
+          </div>
+          <div className="ocsp-detail-row">
+            <span>Next Update</span>
+            <span>Jun 25, 2025</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'alerts',
+    icon: <Mail size={22} />,
+    label: 'Email Alerts Before Expiry',
+    title: 'Never Get Caught Off Guard Again',
+    desc: 'Set it and forget it. Beacon sends proactive email (and Slack/webhook) alerts at 30, 14, 7, and 1 day before your certificate expires — giving your team plenty of time to renew before users see a warning.',
+    badge: { text: 'Alert Sent', color: 'accent' },
+    preview: (
+      <div className="spotlight-preview alert-preview">
+        <div className="alert-email-demo">
+          <div className="alert-email-header">
+            <div className="alert-email-from">
+              <span className="alert-dot accent-dot-sm" />
+              <span className="mono-sm">alerts@beacon.dev</span>
+            </div>
+            <span className="alert-time-badge">7 days</span>
+          </div>
+          <div className="alert-email-subject">⚠️ SSL Cert Expiring: api.example.com</div>
+          <div className="alert-email-body">
+            Your SSL certificate for <strong>api.example.com</strong> expires in <strong style={{ color: 'var(--yellow)' }}>7 days</strong>. Renew now to avoid service disruption.
+          </div>
+          <div className="alert-chips-demo">
+            <span className="alert-chip active">30 days</span>
+            <span className="alert-chip active">14 days</span>
+            <span className="alert-chip active current">7 days ←</span>
+            <span className="alert-chip">1 day</span>
+          </div>
+        </div>
+      </div>
+    )
+  },
+];
+
 const STATS = [
   { value: '2s', label: 'Avg. check time' },
   { value: '99.5%', label: 'Uptime SLA' },
@@ -54,6 +230,7 @@ const STATS = [
 export default function HomePage() {
   const [result, setResult] = useState<CertCheckResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeSpotlight, setActiveSpotlight] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useAuth();
 
@@ -104,6 +281,22 @@ export default function HomePage() {
               Check any domain's SSL certificate instantly. See the full chain, expiry countdown,
               and get alerted before disaster strikes. No sign-up required.
             </p>
+
+            {/* 5-feature checkmarks strip */}
+            <div className="hero-checkmarks animate-fade-up delay-2">
+              {[
+                { icon: <GitBranch size={13} />, text: 'Full chain visualized' },
+                { icon: <Calendar size={13} />, text: 'Exact expiry & days left' },
+                { icon: <Key size={13} />, text: 'Issuer, SANs & key strength' },
+                { icon: <AlertCircle size={13} />, text: 'OCSP revocation check' },
+                { icon: <Mail size={13} />, text: 'Email alerts before expiry' },
+              ].map((item, i) => (
+                <div key={i} className="hero-check-item">
+                  <span className="hero-check-icon">{item.icon}</span>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
 
             {/* Checker */}
             <div className="hero-checker animate-fade-up delay-3">
@@ -243,6 +436,66 @@ export default function HomePage() {
                 <div className="stat-label label text-secondary">{stat.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURE SPOTLIGHT ─────────────────────────────────────── */}
+      <section className="spotlight-section section">
+        <div className="container">
+          <div className="section-header">
+            <span className="label text-accent">What You Get</span>
+            <h2 className="display-md">Five features.<br/>Zero compromises.</h2>
+            <p className="body-lg text-secondary">
+              Every check gives you the complete picture — no guesswork, no digging through openssl commands.
+            </p>
+          </div>
+
+          <div className="spotlight-layout">
+            {/* Tab navigation */}
+            <div className="spotlight-tabs">
+              {FEATURE_SPOTLIGHT.map((f, i) => (
+                <button
+                  key={f.id}
+                  id={`spotlight-tab-${f.id}`}
+                  className={`spotlight-tab ${activeSpotlight === i ? 'active' : ''}`}
+                  onClick={() => setActiveSpotlight(i)}
+                >
+                  <span className="spotlight-tab-icon">{f.icon}</span>
+                  <div className="spotlight-tab-text">
+                    <div className="spotlight-tab-label">{f.label}</div>
+                  </div>
+                  <span className={`spotlight-tab-badge badge-${f.badge.color}`}>
+                    {f.badge.text}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Content panel */}
+            <div className="spotlight-panel animate-fade-in" key={activeSpotlight}>
+              <div className="spotlight-panel-text">
+                <div className="spotlight-panel-icon">
+                  {FEATURE_SPOTLIGHT[activeSpotlight].icon}
+                </div>
+                <h3 className="display-md spotlight-panel-title">
+                  {FEATURE_SPOTLIGHT[activeSpotlight].title}
+                </h3>
+                <p className="body-lg text-secondary spotlight-panel-desc">
+                  {FEATURE_SPOTLIGHT[activeSpotlight].desc}
+                </p>
+                <Link
+                  to={isAuthenticated ? '/dashboard' : '/signup'}
+                  className="btn btn-primary"
+                  id={`spotlight-cta-${FEATURE_SPOTLIGHT[activeSpotlight].id}`}
+                >
+                  Try it free <ArrowRight size={16} />
+                </Link>
+              </div>
+              <div className="spotlight-panel-preview">
+                {FEATURE_SPOTLIGHT[activeSpotlight].preview}
+              </div>
+            </div>
           </div>
         </div>
       </section>
