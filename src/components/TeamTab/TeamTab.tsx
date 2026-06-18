@@ -217,15 +217,6 @@ export default function TeamTab({ result }: Props) {
               </div>
             </div>
 
-            {/* Brevo verified sender badge */}
-            <div className="resend-tier-notice resend-setup-guide">
-              <CheckCircle2 size={13} className="resend-tier-icon" style={{ color: 'var(--green)', marginTop: 2 }} />
-              <div>
-                Emails sent via <strong>Brevo</strong> (free — 300/day, sends to anyone).
-                Powered by <code className="resend-code">alerts@beaconssl.dev</code>.
-              </div>
-            </div>
-
             <div className="channel-input-row">
               <input
                 id="alert-email-input"
