@@ -148,10 +148,10 @@ serve(async (req) => {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  from: "Beacon SSL <alerts@beacon.dev>",
+                  from: "Beacon SSL <alerts@beaconssl.dev>",
                   to: [record.user_email || "user@beacon.dev"], // Default fallback or metadata if stored
                   subject: `🚨 SSL Expiration Alert: ${domain}`,
-                  html: `<p>${alertMessage}</p><p>View your dashboard at <a href="https://beacon.dev/dashboard">Beacon</a>.</p>`,
+                  html: `<p>${alertMessage}</p><p>View your dashboard at <a href="https://beaconssl.dev/dashboard">Beacon</a>.</p>`,
                 }),
               });
             }

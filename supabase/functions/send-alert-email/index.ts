@@ -39,12 +39,9 @@ serve(async (req) => {
       );
     }
 
-    // RESEND_FROM_EMAIL: set this in Supabase secrets to your verified domain sender,
-    // e.g. "BEACON SSL <alerts@yourdomain.com>".
-    // Until a custom domain is verified, keep using onboarding@resend.dev (sends to any address
-    // only when a custom domain is active; otherwise Resend restricts delivery to the
-    // account owner's email). See: https://resend.com/docs/dashboard/domains/introduction
-    const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "BEACON SSL <onboarding@resend.dev>";
+    // RESEND_FROM_EMAIL: set this in Supabase secrets to override.
+    // Defaults to the verified beaconssl.dev domain sender.
+    const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "BEACON SSL <alerts@beaconssl.dev>";
 
     const urgencyColor = daysRemaining <= 7  ? "#E53E3E"
                        : daysRemaining <= 30 ? "#D69E2E"
@@ -153,7 +150,7 @@ serve(async (req) => {
 
       <div class="divider"></div>
 
-      <a class="cta-btn" href="https://beacon-pi-two.vercel.app">
+      <a class="cta-btn" href="https://beaconssl.dev">
         🔍 View Full Certificate Details in Beacon
       </a>
 
@@ -167,7 +164,7 @@ serve(async (req) => {
 
     <div class="footer">
       <p>
-        You received this alert because you requested a simulation from <a href="https://beacon-pi-two.vercel.app">BEACON SSL Monitor</a>.
+        You received this alert because you requested a simulation from <a href="https://beaconssl.dev">BEACON SSL Monitor</a>.
         <br />This is a real email sent from the Beacon alert system.
       </p>
     </div>
@@ -184,7 +181,7 @@ Expires: ${formattedExpiry}
 Issued By: ${issuer}
 Key: ${keyType} ${keySize}-bit
 
-View details at: https://beacon-pi-two.vercel.app
+View details at: https://beaconssl.dev
 
 This is a simulated alert preview from Beacon SSL Monitor.`;
 

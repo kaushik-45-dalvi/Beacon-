@@ -217,19 +217,12 @@ export default function TeamTab({ result }: Props) {
               </div>
             </div>
 
-            {/* Domain setup guide — unlocks sending to any address */}
+            {/* Domain verified — clean sender badge */}
             <div className="resend-tier-notice resend-setup-guide">
-              <AlertCircle size={13} className="resend-tier-icon" />
+              <CheckCircle2 size={13} className="resend-tier-icon" style={{ color: 'var(--green)', marginTop: 2 }} />
               <div>
-                <strong>To send to any email:</strong> Verify your domain on Resend, then set
-                {' '}<code className="resend-code">RESEND_FROM_EMAIL</code> in Supabase secrets to
-                {' '}<code className="resend-code">BEACON SSL &lt;alerts@yourdomain.com&gt;</code>.
-                {' '}<a
-                  href="https://resend.com/domains"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="resend-tier-link"
-                >Add domain on Resend →</a>
+                Emails sent from <code className="resend-code">alerts@beaconssl.dev</code> via Resend.
+                Recipients receive real SSL alert emails — check spam if not delivered.
               </div>
             </div>
 
