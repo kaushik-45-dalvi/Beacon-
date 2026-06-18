@@ -27,7 +27,7 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-  const resendApiKey = Deno.env.get("RESEND_API_KEY") || "";
+  const brevoApiKey = Deno.env.get("BREVO_API_KEY") || Deno.env.get("RESEND_API_KEY") || "";
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return new Response(
@@ -139,14 +139,13 @@ serve(async (req) => {
                   message: alertMessage,
                 }),
               });
-            } else if (channel === "email" && resendApiKey) {
+            } else if (channel === "email" && brevoApiKey) {
               // Send email using Brevo (free: 300/day, no domain verification needed)
-              // resendApiKey secret is reused as BREVO_API_KEY here — rename if needed
               const senderEmail = Deno.env.get("BREVO_SENDER_EMAIL") || "noreply@beaconssl.dev";
               await fetch("https://api.brevo.com/v3/smtp/email", {
                 method: "POST",
                 headers: {
-                  "api-key": resendApiKey, // set BREVO_API_KEY in Supabase secrets
+                  "api-key": brevoApiKey,
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
