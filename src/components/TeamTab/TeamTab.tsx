@@ -213,7 +213,7 @@ export default function TeamTab({ result }: Props) {
               </div>
               <div>
                 <strong className="body-sm text-primary">Email Alert</strong>
-                <p className="label text-secondary">Send a real certificate alert email to anyone</p>
+                <p className="label text-secondary">Send a real certificate alert email to anyone (check spam folder or inbox)</p>
               </div>
             </div>
 
@@ -239,6 +239,10 @@ export default function TeamTab({ result }: Props) {
                  : <><Send size={14} /> Send</>}
               </button>
             </div>
+
+            <p className="label text-secondary mt-1" style={{ fontSize: '11px', marginTop: '6px', opacity: 0.8 }}>
+              Note: If you don't see the email, please check your spam folder or inbox.
+            </p>
 
             {emailState === 'success' && (
               <div className="channel-feedback channel-feedback-success">
