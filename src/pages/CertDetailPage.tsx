@@ -5,6 +5,7 @@ import { MonitoredCert } from '../types';
 import CertResult from '../components/CertResult/CertResult';
 import { updateSEO } from '../utils/seo';
 import { supabase } from '../services/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 import './CertDetailPage.css';
 
 const ALERT_DAYS = [30, 14, 7, 1];
@@ -48,6 +49,7 @@ const mapDbToCert = (row: any): MonitoredCert => {
 export default function CertDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated, isLoaded, user } = useAuth();
   const [cert, setCert] = useState<MonitoredCert | null>(null);
   const [alertDays, setAlertDays] = useState<number[]>([30, 7, 1]);
   const [alertChannels, setAlertChannels] = useState<string[]>(['email']);
@@ -56,7 +58,9 @@ export default function CertDetailPage() {
   const [webhookUrl, setWebhookUrl] = useState('');
 
   useEffect(() => {
-    if (!id) return;
+    if (!isLoaded) return;
+    if (!isAuthenticated) { navigate('/login'); return; }
+    if (!id || !user) return;
     
     const loadCert = async () => {
       try {
@@ -68,6 +72,12 @@ export default function CertDetailPage() {
 
         if (error) throw error;
         if (data) {
+          // Security check: ensure this domain belongs to the current user
+          if (data.user_id !== user.id) {
+            console.warn("Security check failed: Domain does not belong to logged-in user");
+            navigate('/dashboard');
+            return;
+          }
           const mapped = mapDbToCert(data);
           setCert(mapped);
           setAlertDays(data.alert_days || [30, 7, 1]);
@@ -89,7 +99,7 @@ export default function CertDetailPage() {
     };
 
     loadCert();
-  }, [id, navigate]);
+  }, [isLoaded, isAuthenticated, id, user, navigate]);
 
   const toggleDay = (day: number) => {
     setAlertDays(prev =>
@@ -185,6 +195,14 @@ export default function CertDetailPage() {
       alert('Failed to remove domain: ' + err.message);
     }
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="cert-detail-page container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <RefreshCw className="animate-spin text-accent" size={32} />
+      </div>
+    );
+  }
 
   if (!cert) return (
     <div className="cert-detail-page container">
